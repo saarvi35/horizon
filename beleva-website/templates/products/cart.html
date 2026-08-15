@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="card shadow-lg rounded-4 overflow-hidden">
+
+    {% if items %}
+    <div class="row g-0">
+
+      <!-- CART ITEMS SECTION -->
+      <div class="col-md-8 cart p-4 bg-white">
+        <div class="title mb-4">
+          <div class="row">
+            <div class="col">
+              <h4><b>Shopping Bag</b></h4>
+            </div>
+          </div>
+        </div>
+
+        
+        {% for item in items %}
+        <div class="row border-top border-bottom py-3 align-items-center">
+          <!-- Image -->
+          <div class="col-3">
+            <img class="img-fluid w-100" style="height: 120px; object-fit: contain;" src="{{ item.product.details_image.first.image.url }}"
+              alt="Product">
+          </div>
+
+          <!-- Product Info -->
+          <div class="col-5">
+            <h5>{{ item.product.product_name }}</h5>
+            <p class="small text-muted text-truncate">
+              {{ item.product.description }}...
+            </p>
+          </div>
+
+          <!-- Quantity Controls -->
+          <div class="col-2">
+            <div class="d-flex align-items-center">
+              <a href="{% url 'decrease' item.id %}" class="quantity-control">-</a>
+              <span class="border px-2 mx-1">{{ item.quantity }}</span>
+              <a href="{% url 'increase' item.id %}" class="quantity-control">+</a>
+            </div>
+          </div>
+
+          <!-- Prices -->
+          <div class="col-2 text-end">
+            
+            {% if item.line_discount %}
+            <span class="text-muted text-decoration-line-through">₹{{ item.line_original_total|floatformat:2 }}</span>
+            <strong class="text-success">₹{{ item.line_total|floatformat:2 }}</strong>
+            <br>
+            {% else %}
+            <strong class="text-success">₹{{ item.line_total|floatformat:2 }}</strong>
+            {% endif %}
+
+
+            <a href="{% url 'delete_from_cart' item.id %}" class="text-danger m-3">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+
+        <div class="mt-4">
+          <a href="{% url 'home' %}" class=" text-decoration-none">&larr; <span class="text-dark">Back to shop</span></a>
+        </div>
+      </div>
+
+      <!-- SUMMARY SECTION -->
+      <div class="col-md-4 summary p-4 bg-light">
+        <div class="row mb-2 d-flex align-items-center">
+          <div class="col">
+            <h4><b>Price Details</b></h4>
+          </div>
+          <div class="col"><i>( Items {{ total_quantity }} )</i></div>
+        </div>
+        <hr>
+
+        <div class="row mb-2 d-flex align-items-center">
+          <div class="col">
+            <p>Shipping Charges</p>
+          </div>
+          <div class="col text-end">
+            {% if free_shipping == 0 %}
+            <span class="text-success">Free</span>
+            <span class="text-decoration-line-through">₹99</span>
+            {% else %}
+            <span class="text-danger">₹{{ free_shipping }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="row border-top pt-3 pb-3">
+          <div class="col">TOTAL PRICE</div>
+          <span class="col text-end">₹{{ total|add:discount }}</span>
+        </div>
+
+        <div class="row border-top pt-3 pb-3">
+          <div class="col">DISCOUNT</div>
+          <span class="col text-end">₹{{ discount }}</span>
+        </div>
+
+        <div class="row border-top pt-3 pb-3">
+          <div class="col">GRAND TOTAL</div>
+          <span class="col text-end">₹{{ grand }}</span>
+        </div>
+
+        <a href="{% url 'address' %}" class="btn btn-dark mt-4 w-100">CHECKOUT</a>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="bg-white p-4 text-center">
+      <img src="{% static 'images/cart.png' %}" alt="bag" id="bag">
+      <h3>Your shopping bag is feeling a little empty...</h3>
+      <p>Looks like you haven’t added anything yet.</p>
+      <a href="{% url 'all_products' %}" class="btn btn-dark">Start Shopping</a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

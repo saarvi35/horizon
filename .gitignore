@@ -1,0 +1,48 @@
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
+.env
+.env.local
+*.env
+!.env.example
+
+# ==========================================
+# Virtual Environment
+# ==========================================
+beleva-website/venv/
+venv/
+ENV/
+
+# ==========================================
+# Python & Bytecode
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ==========================================
+# SQLite & Dump Files (Excluding old DBs)
+# ==========================================
+*.sqlite3
+beleva-website/db.sqlite3
+beleva-website/db_backup.sqlite3
+beleva-website/datadump.json
+*.json.bak
+
+# ==========================================
+# Static, Media & Backup Directories
+# ==========================================
+beleva-website/staticfiles/
+beleva-website/media/
+backups/
+certbot/conf/
+certbot/www/
+
+# ==========================================
+# IDE & OS Artifacts
+# ==========================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

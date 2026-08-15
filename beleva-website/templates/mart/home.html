@@ -1,0 +1,479 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<!-- Carousel -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+
+  <!-- Carousel Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+      aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+  </div>
+
+  <!-- Carousel Items -->
+<div class="carousel-inner">
+
+  <div class="carousel-item position-relative active" style="height: 40rem; overflow:hidden;">
+    <img src="{% static 'images/background.jpg' %}" class="d-block w-100 rounded-0" alt="Slide 1">
+    <div class="carousel-hero">
+      <h1>Make Your<br>Fashion Look<br>Swanky.</h1>
+      <a href="{% url 'all_products' %}" class="btn-hero">SHOP NOW</a>
+    </div>
+  </div>
+
+  <div class="carousel-item position-relative" style="height: 40rem; overflow:hidden;">
+    <img src="{% static 'images/background1.jpg' %}" class="d-block w-100 rounded-0" alt="Slide 2">
+    <div class="carousel-hero w-75">
+      <h1>Wear Confidence, <br> Wear Us.</h1>
+      <a href="{% url 'all_products' %}" class="btn-hero">SHOP NOW</a>
+    </div>
+  </div>
+
+</div>
+
+
+  <!-- Carousel Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+
+</div>
+
+<!-- categories -->
+<section class="py-5 mt-3">
+  <div class="container">
+<div class="flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+    <h2 class="text-center fw-semibold display-5 mb-2" style="font-family: 'Playfair Display', serif;">
+        HOT CATEGORIES
+      </h2>
+    <p class="text-muted mt-2 text-center fs-6">
+    Discover styles for every mood and occasion!
+  </p>
+    <div class="short-heading">
+      <a href="{% url 'all_products' %}?deals=true" 
+       class="btn-view-all text-uppercase fw-semibold mt-2 mt-md-0">
+      View all categories
+    </a>
+    </div>
+   </div>
+
+    
+    <div class="row justify-content-center">
+      {% for category in categories %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+        <a href="{% url 'categories' %}" class="text-decoration-none text-dark">
+
+          <div class="card product-card border-1 shadow-lg p-3" style="border-radius: 16px;">
+            <img src="{{ category.category_image.url }}" class="product-img mb-3"
+              style="height: 250px; object-fit: cover; border-radius: 10px;" alt="{{ category.category_name }}">
+            <h5 class="fw-semibold mb-1 text-dark text-truncate">{{ category.category_name }}</h5>
+            <p class="text-muted small mb-2 text-truncate">{{ category.description }}</p>
+          </div>
+
+        </a>
+      </div>
+
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- deals of the day -->
+<div class="container shadow rounded-4 mt-5" style="background: linear-gradient(135deg, #fef6f9, #e8f0ff);">
+  <!-- Header -->
+   <div class="container pb-4 pt-4 position-relative">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+  <!-- Heading and subheading -->
+  <div>
+    <h2 class="fw-semibold display-5 mb-2 text-center text-md-start" style="font-family: 'Playfair Display', serif;">
+      Deals of the Day
+    </h2>
+    <p class="text-muted fs-6 mb-0 text-center text-md-start">
+      Exclusive fashion steals you’ll love today!!
+    </p>
+  </div>
+
+  <div id="deal-timer" class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 my-3 my-md-0">
+  <div class="timer-box text-center">
+    <span id="days" class="timer-value">0d</span>
+    <small class="timer-label"></small>
+  </div>
+  <div class="timer-box text-center">
+    <span id="hours" class="timer-value">0h</span>
+    <small class="timer-label"></small>
+  </div>
+  <div class="timer-box text-center">
+    <span id="minutes" class="timer-value">0m</span>
+    <small class="timer-label"></small>
+  </div>
+  <div class="timer-box text-center">
+    <span id="seconds" class="timer-value">0s</span>
+    <small class="timer-label"></small>
+  </div>
+</div>  
+
+  <!-- View All -->
+  <div>
+    <a href="{% url 'all_products' %}?deals=true"
+       class="btn-view-all text-uppercase fw-semibold text-decoration-none">
+      View all products
+    </a>
+  </div>
+</div>
+
+
+
+
+  <div class="row">
+    <!-- Banner Left -->
+    <div class="col-lg-4">
+      <img src="{% static 'images/deal.avif' %}" class="img-fluid rounded shadow" alt="Deals Banner" style="max-height:370px ; width: 100%; object-fit: cover;">
+    </div>
+
+    <!-- Scrollable Products Right -->
+    <div class="col-lg-8">
+      <!-- Scrollable wrapper -->
+      <div class="position-relative">
+        <button id="scrollLeftBtn" class="btn position-absolute top-50 start-0 translate-middle-y bg-white rounded-circle shadow d-flex justify-content-center align-items-center" style="z-index: 10; width: 36px; height: 36px;">
+          <i class="bi bi-chevron-left fs-5 m-0 p-0"></i>
+        </button>
+
+        <!-- Products Scrollable -->
+        <div id="productScroll" class="d-flex overflow-auto px-5 hide-scrollbar" style="scroll-behavior: smooth;">
+          {% for product in deals %}
+          <div class="card product-card p-3 m-2 flex-shrink-0" style="scroll-snap-align: start;">
+            <a href="{% url 'product_details' product.id %}" class="text-decoration-none text-dark">
+            <!-- Image -->
+            {% with product.details_image.all|first as first_image %}
+                <img src="{{ first_image.image.url }}" class="card-img-top" style="height: 180px; object-fit: contain; background-color: white;" alt="{{ product.product_name }}">
+            {% endwith %}
+            </a>
+            <!-- Hover Icons -->
+            <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-2 opacity-0 hover-icons transition">
+              <button class="btn btn-sm btn-light rounded-circle shadow-sm"><i class="fas fa-heart"></i></button>
+              <button class="btn btn-sm btn-light rounded-circle shadow-sm"><i class="fas fa-sync-alt"></i></button>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body" >
+                
+                  {{ product.product_name}}
+                          <!-- ratings and reviews -->
+           <div class="mb-2">
+            {% with rating=product.ratings %}
+              {% if rating %}
+                {% for i in "12345" %}
+                  {% if rating >= forloop.counter %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% elif rating >= forloop.counter0|add:"0.5" %}
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="text-muted small ms-1">({{ product.reviews }} reviews)</span>
+              {% else %}
+                <span class="text-muted small">No reviews yet</span>
+              {% endif %}
+            {% endwith %}
+          </div>
+          <div class="mb-2 d-flex align-items-center justify-content-between flex-wrap">
+            {% if product.discount_price %}
+              <div >
+                <span class="text-muted text-decoration-line-through">₹ {{ product.original_price }}</span>
+                <span class="text-danger fw-bold">₹ {{ product.discount_price }}</span>
+              </div>
+              {% else %}
+              <span class="text-danger fw-bold">₹ {{ product.original_price }}</span>
+              {% endif %}
+            
+            <div class="mb-2 d-flex align-items-center justify-content-between flex-wrap">
+                  
+                  <button class="btn position-absolute end-0 m-2 wishlist-btn "
+                          data-product-id="{{ product.id }}"
+                          onclick="toggleWishlist(this)"
+                          title="Toggle wishlist">
+                  <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart text-danger"></i>
+                </button>
+                </div>
+          </div>
+              
+              <div>
+                
+
+                {% widthratio product.stock 200 100 as percent_width %}
+                <div class="progress mb-1" style="height: 6px;">
+                  <div class="progress-bar bg-danger" style="width: {{ percent_width }}%;"></div>
+                </div>
+                <p class="text-muted small mb-0">Available: {{ product.stock }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <button id="scrollRightBtn" class="btn position-absolute top-50 end-0 translate-middle-y bg-white rounded-circle shadow d-flex justify-content-center align-items-center" style="z-index: 10; width: 36px; height: 36px;">
+          <i class="bi bi-chevron-right fs-5 m-0 p-0"></i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+    
+
+</div>
+</div>
+
+<!-- featured products -->
+<section class="mt-5 py-5">
+  <div class="container">
+    <div class="flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+    <h2 class="text-center fw-semibold display-5 mb-2 text-uppercase" style="font-family: 'Playfair Display', serif;">
+        You'll love these <span>😍</span>
+      </h2>
+    <p class="text-muted mt-2 text-center fs-6">
+    Trending picks to elevate your wardrobe!
+  </p>
+    <div class="short-heading">
+      <a href="{% url 'all_products' %}" 
+       class="btn-view-all text-uppercase fw-semibold mt-2 mt-md-0">
+      View all products
+    </a>
+    </div>
+   </div>
+
+    <div class="row justify-content-center">
+      {% for product in featured %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+        <!-- Card as a clickable link -->
+        
+          <div class="card product-card border-1 shadow-lg p-3" style="border-radius: 16px;">
+<a href="{% url 'product_details' product.id %}" class="text-decoration-none text-dark">
+            <img src="{{ product.details_image.first.image.url }}" ... class="product-img mb-3"
+              style="height: 250px; object-fit: cover; border-radius: 10px;" alt="{{ product.product_name }}">
+            <h5 class="fw-semibold mb-1 text-dark text-truncate">{{ product.product_name }}</h5>
+            <p class="text-muted small text-truncate">{{ product.description }}</p>
+</a>
+          <!-- ratings and reviews -->
+           <div class="mb-2">
+            {% with rating=product.ratings %}
+              {% if rating %}
+                {% for i in "12345" %}
+                  {% if rating >= forloop.counter %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% elif rating >= forloop.counter0|add:"0.5" %}
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="text-muted small ms-1">({{ product.reviews }} reviews)</span>
+              {% else %}
+                <span class="text-muted small">No reviews yet</span>
+              {% endif %}
+            {% endwith %}
+          </div>
+            <!-- Price + Wishlist icon in same row -->
+            <div class="d-flex justify-content-between align-items-center px-2 mt-2">
+              {% if product.discount_price %}
+              <div>
+                <span class="text-muted text-decoration-line-through">₹ {{ product.original_price }}</span>
+                <span class="text-danger fw-bold">₹ {{ product.discount_price }}</span>
+              </div>
+              {% else %}
+              <span class="text-danger fw-bold">₹ {{ product.original_price }}</span>
+              {% endif %}
+              
+                <button class="btn position-absolute end-0 m-2 wishlist-btn "
+                          data-product-id="{{ product.id }}"
+                          onclick="toggleWishlist(this)"
+                          title="Toggle wishlist">
+                  <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart text-danger"></i>
+                </button>
+              
+            </div>
+          </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- new arrivals -->
+<div class="container shadow rounded-4 mt-5" style="background: linear-gradient(135deg, #fef6f9, #e8f0ff);">
+  <!-- Header -->
+   <div class="container pb-4 pt-4 position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+  <!-- Center Heading -->
+  <div class="flex-grow-1 text-center">
+    <h2 class="fw-semibold display-5 mb-2 text-uppercase" style="font-family: 'Playfair Display', serif;">
+      New Arrivals
+    </h2>
+    <p class="text-muted fs-6 mb-0">
+      Fresh looks just dropped in store!
+    </p>
+  </div>
+
+  <!-- View All (Right side) -->
+  <div class="ms-3">
+    <a href="{% url 'all_products' %}?new=true"
+       class="btn-view-all text-uppercase fw-semibold text-decoration-none">
+      View all products
+    </a>
+  </div>
+</div>
+
+
+
+
+
+  <div class="row">
+    <!-- Banner Left -->
+    <div class="col-lg-4">
+      <img src="{% static 'images/newarrival.jpg' %}" class="img-fluid rounded shadow" alt="Deals Banner" style="max-height:370px ; width: 100%; object-fit: cover;">
+    </div>
+
+    <!-- Scrollable Products Right -->
+    <div class="col-lg-8">
+      <!-- Scrollable wrapper -->
+      <div class="position-relative">
+        <button id="scrollLeftBtn" class="btn position-absolute top-50 start-0 translate-middle-y bg-white rounded-circle shadow d-flex justify-content-center align-items-center" style="z-index: 10; width: 36px; height: 36px;">
+          <i class="bi bi-chevron-left fs-5 m-0 p-0"></i>
+        </button>
+
+        <!-- Products Scrollable -->
+        <div id="productScroll" class="d-flex overflow-auto px-5 hide-scrollbar" style="scroll-behavior: smooth;">
+          {% for product in new_arrivals %}
+          <div class="card product-card p-3 m-2 flex-shrink-0" style="scroll-snap-align: start;">
+            <a href="{% url 'product_details' product.id %}" class="text-decoration-none text-dark">
+            <!-- Image -->
+            {% with product.details_image.all|first as first_image %}
+                <img src="{{ first_image.image.url }}" class="card-img-top" style="height: 180px; object-fit: contain; background-color: white;" alt="{{ product.product_name }}">
+            {% endwith %}
+            </a>
+            <!-- Hover Icons -->
+            <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-2 opacity-0 hover-icons transition">
+              <button class="btn btn-sm btn-light rounded-circle shadow-sm"><i class="fas fa-heart"></i></button>
+              <button class="btn btn-sm btn-light rounded-circle shadow-sm"><i class="fas fa-sync-alt"></i></button>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body" >
+                
+                  {{ product.product_name}}
+                          <!-- ratings and reviews -->
+           <div class="mb-2">
+            {% with rating=product.ratings %}
+              {% if rating %}
+                {% for i in "12345" %}
+                  {% if rating >= forloop.counter %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% elif rating >= forloop.counter0|add:"0.5" %}
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="text-muted small ms-1">({{ product.reviews }} reviews)</span>
+              {% else %}
+                <span class="text-muted small">No reviews yet</span>
+              {% endif %}
+            {% endwith %}
+          </div>
+          <div class="mb-2 d-flex align-items-center justify-content-between flex-wrap">
+            {% if product.discount_price %}
+              <div >
+                <span class="text-muted text-decoration-line-through">₹ {{ product.original_price }}</span>
+                <span class="text-danger fw-bold">₹ {{ product.discount_price }}</span>
+              </div>
+              {% else %}
+              <span class="text-danger fw-bold">₹ {{ product.original_price }}</span>
+              {% endif %}
+            
+            <div class="mb-2 d-flex align-items-center justify-content-between flex-wrap">
+                  
+                  <button class="btn position-absolute end-0 m-2 wishlist-btn "
+                          data-product-id="{{ product.id }}"
+                          onclick="toggleWishlist(this)"
+                          title="Toggle wishlist">
+                  <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart text-danger"></i>
+                </button>
+                </div>
+          </div>
+              
+              <div>
+                
+
+                {% widthratio product.stock 200 100 as percent_width %}
+                <div class="progress mb-1" style="height: 6px;">
+                  <div class="progress-bar bg-danger" style="width: {{ percent_width }}%;"></div>
+                </div>
+                <p class="text-muted small mb-0">Available: {{ product.stock }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <button id="scrollRightBtn" class="btn position-absolute top-50 end-0 translate-middle-y bg-white rounded-circle shadow d-flex justify-content-center align-items-center" style="z-index: 10; width: 36px; height: 36px;">
+          <i class="bi bi-chevron-right fs-5 m-0 p-0"></i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+    
+
+</div>
+</div>
+
+<!-- customer reviews -->
+<div class="review-section mt-5 mb-5 text-center">
+  <h5 class="mb-4 fw-bold text-uppercase">We love good compliment</h5>
+
+  <div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-inner mb-4">
+      <div class="carousel-item active">
+        <blockquote class="blockquote m-4">
+          <p>“Absolutely loved the fabric, <br> it’s soft and fits perfectly!”</p>
+          <footer class="blockquote-footer">Meera, Bangalore</footer>
+        </blockquote>
+      </div>
+      <div class="carousel-item">
+        <blockquote class="blockquote m-4">
+          <p>“Stylish, comfy, and worth <br> every penny. Great buy!”</p>
+          <footer class="blockquote-footer">Kabir, Dubai</footer>
+        </blockquote>
+      </div>
+      <div class="carousel-item">
+        <blockquote class="blockquote m-4">
+          <p>“Didn’t expect it to be this good. <br> Excellent quality and look!”</p>
+          <footer class="blockquote-footer">Aarav, Mumbai</footer>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom indicators container below the carousel -->
+  <div class="custom-indicators mt-3">
+    <button type="button" data-bs-target="#reviewCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+    <button type="button" data-bs-target="#reviewCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#reviewCarousel" data-bs-slide-to="2"></button>
+  </div>
+</div>
+
+
+<script src="{% static 'javascript/javascript.js' %}"></script>
+
+{% endblock %}

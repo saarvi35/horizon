@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Beleva — Help Center</title>
+<style>
+  :root{
+    --page-bg:#ffffff;     
+    --card:#faf8f6;        
+    --muted:#7a746d;       
+    --text:#3e3a36;        
+    --accent:#d4a373;      
+    --radius:16px;
+    --shadow:0 10px 30px rgba(0,0,0,.08); 
+  }
+
+  /* Reset */
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    background: linear-gradient(180deg,#faf8f6 0%, #f4f1ed 100%);
+    color:var(--text);
+    line-height:1.55;
+  }
+  a{color:inherit}
+  img{max-width:100%;display:block}
+
+  /* Header / Hero */
+  .hero{
+    padding:64px 20px 40px;
+    background: radial-gradient(1200px 400px at 10% -10%, rgba(212,163,115,.08), transparent 60%),
+                radial-gradient(900px 400px at 90% -20%, rgba(212,163,115,.07), transparent 60%);
+    border-bottom:1px solid rgba(0,0,0,.06);
+  }
+  .container{max-width:1100px;margin:0 auto;padding:0 16px}
+  .hero h1{font-size: clamp(28px, 4vw, 44px); margin:0 0 8px}
+  .hero p{color:var(--muted); margin:0}
+  .quick{
+    display:grid; gap:16px; grid-template-columns: repeat( auto-fit, minmax(230px,1fr));
+    margin:28px 0 0;
+  }
+  .card{
+    background:var(--card); border:1px solid rgba(0,0,0,.06);
+    border-radius: var(--radius); padding:18px; box-shadow: var(--shadow);
+    transition: transform .2s ease, border-color .2s ease;
+  }
+  .card:hover{transform: translateY(-3px); border-color: rgba(212,163,115,.35)}
+  .card-title{font-weight:600; margin:4px 0 6px}
+  .card small{color:var(--muted)}
+
+  .badge{
+    display:inline-block; font-size:12px; padding:4px 10px; border-radius:999px;
+    background:rgba(212,163,115,.14); color:var(--accent); border:1px solid rgba(212,163,115,.35);
+    margin-left:8px
+  }
+
+  /* Category nav */
+  .cat-nav{
+    margin:34px 0 8px; display:flex; flex-wrap:wrap; gap:8px
+  }
+  .chip{
+    padding:8px 12px; border-radius:999px; border:1px solid rgba(0,0,0,.08); color:var(--muted);
+    background:rgba(0,0,0,.02); text-decoration:none; font-size:14px;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .chip:hover{border-color:rgba(212,163,115,.45); color:var(--text)}
+
+  /* FAQ blocks using <details> */
+  .faq-section{margin:22px 0 40px}
+  .faq-grid{display:grid; gap:14px}
+  details.faq{
+    background:var(--card); border:1px solid rgba(0,0,0,.07);
+    border-radius:12px; overflow:hidden;
+    transition: border-color .2s ease
+  }
+  details.faq[open]{border-color:rgba(212,163,115,.35)}
+  summary{
+    position:relative; list-style:none; cursor:pointer;
+    padding:16px 48px 16px 16px; font-weight:600;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary:after{
+    content:"›";
+    position:absolute; right:16px; top:50%; transform: translateY(-50%) rotate(90deg);
+    font-size:18px; color:var(--muted); transition: transform .2s ease, color .2s ease;
+  }
+  details[open] summary:after{transform: translateY(-50%) rotate(270deg); color:var(--accent)}
+  .faq-body{
+    padding:0 16px 16px; color:var(--muted); border-top:1px dashed rgba(0,0,0,.08)
+  }
+  .faq-body p{margin:12px 0}
+  .note{
+    background: rgba(139,189,139,.12); border:1px solid rgba(139,189,139,.45); color:#2f5d2f;
+    padding:10px 12px; border-radius:8px; font-size:14px
+  }
+
+  /* Section titles */
+  .h6{font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:26px 0 10px}
+  .h3{font-size: clamp(20px, 2.8vw, 28px); margin:6px 0 14px}
+
+  /* Utility */
+  .muted{color:var(--muted)}
+</style>
+
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <h1>Help Center</h1>
+      <p>Answers to common questions, tips for faster resolutions, and ways to contact Beleva support.</p>
+
+      <!-- Quick Help cards -->
+      <div class="quick">
+        <div class="card">
+          <div class="card-title">Order Status <span class="badge">Real-time</span></div>
+          <small>Track your orders, delivery windows, and invoices.</small>
+        </div>
+        <div class="card">
+          <div class="card-title">Returns & Warranty</div>
+          <small>Start a return, learn warranty coverage and timelines.</small>
+        </div>
+        <div class="card">
+          <div class="card-title">Payments & EMI</div>
+          <small>Supported methods, EMI eligibility, and refunds.</small>
+        </div>
+        <div class="card">
+          <div class="card-title">Tech Support</div>
+          <small>Device setup, troubleshooting, and repairs.</small>
+        </div>
+      </div>
+
+      <nav class="cat-nav" aria-label="FAQ categories">
+        <a class="chip" href="#orders">Orders</a>
+        <a class="chip" href="#shipping">Shipping</a>
+        <a class="chip" href="#payments">Payments</a>
+        <a class="chip" href="#returns">Returns & Warranty</a>
+        <a class="chip" href="#account">Account</a>
+        <a class="chip" href="#tech">Technical</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Orders -->
+    <section id="orders" class="faq-section">
+      <div class="h6">Category</div>
+      <h2 class="h3">Orders</h2>
+      <div class="faq-grid">
+        <details class="faq" open>
+          <summary>How do I track my order?</summary>
+          <div class="faq-body">
+            <p>Go to <em>My Account → Orders</em> and select your order to see live status and courier tracking ID. You’ll also receive SMS/email updates until delivery.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>Can I modify my order after placing it?</summary>
+          <div class="faq-body">
+            <p>Edits are possible until the item is packed. Cancel the existing order and place a fresh one if the <strong>Edit</strong> option isn’t shown.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>I didn’t receive an invoice. Where can I download it?</summary>
+          <div class="faq-body">
+            <p>Invoices are available under <em>My Orders → View Details → Download Invoice</em> after dispatch. If missing, contact support with your order ID.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Shipping -->
+    <section id="shipping" class="faq-section">
+      <div class="h6">Category</div>
+      <h2 class="h3">Shipping</h2>
+      <div class="faq-grid">
+        <details class="faq">
+          <summary>What are the delivery timelines?</summary>
+          <div class="faq-body">
+            <p>Metro cities: 1–3 business days. Other locations: 3–7 days. Remote areas may take longer based on courier coverage.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>Do you offer same-day or next-day delivery?</summary>
+          <div class="faq-body">
+            <p>Available on select products and pincodes. Check the product page for <span class="badge">Fast Delivery</span> badge.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>What should I do if my package is damaged?</summary>
+          <div class="faq-body">
+            <p>Refuse delivery if severely damaged. Otherwise, record an unboxing video and raise a ticket within 48 hours for quick resolution.</p>
+            <p class="note">Tip: Keep original packaging until your device is fully tested.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Payments -->
+    <section id="payments" class="faq-section">
+      <div class="h6">Category</div>
+      <h2 class="h3">Payments</h2>
+      <div class="faq-grid">
+        <details class="faq">
+          <summary>Which payment methods are accepted?</summary>
+          <div class="faq-body">
+            <p>We accept Cards, UPI, Netbanking, Wallets (Paytm), PayPal, and Apple Pay. EMI options are shown at checkout for eligible carts.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>My payment failed but money was deducted.</summary>
+          <div class="faq-body">
+            <p>Most banks auto-reverse within 2–5 business days. If not credited, share the transaction reference with support for tracking.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Returns & Warranty -->
+    <section id="returns" class="faq-section">
+      <div class="h6">Category</div>
+      <h2 class="h3">Returns & Warranty</h2>
+      <div class="faq-grid">
+        <details class="faq">
+          <summary>What is the return window?</summary>
+          <div class="faq-body">
+            <p>Most items are eligible for returns within 7 days of delivery if unused and in original packaging. Health & hygiene products are non-returnable.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>How do warranties work?</summary>
+          <div class="faq-body">
+            <p>Manufacturer warranty periods vary by brand (typically 1 year). Keep your invoice; service centers may ask for it.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>How long do refunds take?</summary>
+          <div class="faq-body">
+            <p>Once the item passes QC, refunds are initiated within 24–48 hours. Bank posting times vary by method (usually 2–7 business days).</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Account -->
+    <section id="account" class="faq-section">
+      <div class="h6">Category</div>
+      <h2 class="h3">Account</h2>
+      <div class="faq-grid">
+        <details class="faq">
+          <summary>I can’t sign in / forgot password.</summary>
+          <div class="faq-body">
+            <p>Use <em>Forgot Password</em> to reset via email/OTP. Check spam folder if the email isn’t received within a few minutes.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>How do I change my address or phone number?</summary>
+          <div class="faq-body">
+            <p>Go to <em>Profile → Addresses</em> to edit or add a new address. For security, some fields may need OTP verification.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Technical -->
+    <section id="tech" class="faq-section">
+      <div class="h6">Category</div>
+      <h2 class="h3">Technical Support</h2>
+      <div class="faq-grid">
+        <details class="faq">
+          <summary>Do you provide laptop/phone setup assistance?</summary>
+          <div class="faq-body">
+            <p>Yes. Our experts can help with OS updates, data transfer, antivirus, and basic device setup through remote or in-store sessions.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>How do I book a repair?</summary>
+          <div class="faq-body">
+            <p>Open a support ticket with your order ID and issue summary. We’ll arrange pickup or guide you to the nearest authorized center.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+  </main>
+
+
+</body>
+</html>

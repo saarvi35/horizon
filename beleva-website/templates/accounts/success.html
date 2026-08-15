@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .success-wrapper {
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    padding: 20px;
+  }
+
+  .success-card {
+    max-width: 600px;
+    width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    padding: 40px 30px;
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: #28a7451a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .success-icon i {
+    font-size: 40px;
+    color: #28a745;
+  }
+
+  .success-card h2 {
+    font-weight: 700;
+    color: #28a745;
+    margin-bottom: 15px;
+  }
+
+  .success-details p {
+    margin: 6px 0;
+    font-size: 1rem;
+  }
+
+  .highlight {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .btn-continue {
+    margin-top: 25px;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #28a745, #3ccf7f);
+    border: none;
+    color: #fff;
+    transition: all 0.3s ease;
+  }
+
+  .btn-continue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .success-card {
+      padding: 30px 20px;
+    }
+    .success-card h2 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<div class="success-wrapper">
+  <div class="success-card">
+    <!-- Success Icon -->
+    <div class="success-icon">
+      <i class="bi bi-check-lg"></i>
+    </div>
+
+    <!-- Heading -->
+    <h2>Order Placed Successfully!</h2>
+    <p class="text-muted mb-4">Thank you for shopping with <span class="highlight">Beleva</span>.</p>
+
+    <!-- Order Details -->
+    <div class="success-details text-start">
+      <p>📦 Order ID: <span class="highlight">#{{ order.id }}</span></p>
+      <p>💳 Payment Method: <span class="highlight">{{ order.payment_method }}</span></p>
+      <p>💰 Total Paid: ₹<span class="highlight">{{ order.total_price }}</span></p>
+    </div>
+
+    <p class="text-muted mt-3">A confirmation email has been sent. Your items will ship soon.</p>
+
+    <!-- Continue Button -->
+    <a href="{% url 'home' %}" class="btn btn-continue">Continue Shopping</a>
+  </div>
+</div>
+{% endblock %}

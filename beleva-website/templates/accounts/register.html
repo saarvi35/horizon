@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Register | Beleva {% endblock %}
+
+{% block content %}
+<style>
+  .register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+  }
+
+  .register-wrapper {
+    display: flex;
+    flex-direction: row;
+    max-width: 950px;
+    width: 100%;
+    background-color:  #F9F7F5;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .register-form {
+    flex: 1;
+    padding: 50px 40px;
+  }
+
+  .register-form h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+
+  .form-control1 {
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .btn-primary {
+    background-color: #000;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .btn-primary:hover {
+    background-color: #333;
+  }
+
+  .register-image {
+    flex: 1;
+    background: url('{% static "images/register.avif" %}');
+    background-size: cover;
+    /* background-repeat: no-repeat; */
+  }
+
+  @media (max-width: 768px) {
+    .register-wrapper {
+      flex-direction: column;
+    }
+
+    .register-image {
+      display: none;
+    }
+
+    .register-form {
+      padding: 30px 20px;
+    }
+  }
+</style>
+
+
+<div class="register-container">
+  <div class="register-wrapper">
+    
+    <!-- Form Section -->
+    <div class="register-form">
+      <a href="javascript:history.back()" class="text-decoration-none d-inline-flex align-items-center mb-3">
+        <span class="me-2 fs-4">&#8592;</span>
+        <span class="fw-medium">Back</span>
+      </a>
+
+      <h1 class="mb-3">Registration Form</h1>
+      <form method="post" autocomplete="off">
+        {% csrf_token %}
+        <input type="text" class="form-control1" name="name" placeholder="Name" required>
+        <input type="email" class="form-control1" name="email" placeholder="Email address" required>
+        <input type="text" class="form-control1" name="phone_no" placeholder="Phone number" required>
+        <input type="password" class="form-control1" name="password" placeholder="Password" required>
+        <input type="password" class="form-control1" name="confirm" placeholder="Confirm Password" required>
+        <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+      </form>
+    </div>
+
+    <!-- Image Section -->
+    <div class="register-image"></div>
+
+  </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block footer %} {% endblock %}

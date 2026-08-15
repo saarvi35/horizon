@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5 text-center" style="max-width: 480px; width: 100%;">
+    
+    <!-- Cancel Icon -->
+    <div class="mb-3">
+      <div class="rounded-circle d-inline-flex justify-content-center align-items-center bg-danger bg-opacity-10" style="width: 80px; height: 80px;">
+        <i class="bi bi-x-circle-fill text-danger" style="font-size: 2.5rem;"></i>
+      </div>
+    </div>
+    
+    <!-- Heading -->
+    <h2 class="fw-bold text-danger mb-2">Payment Cancelled</h2>
+    <p class="lead text-muted mb-4">Your payment was not completed. Don’t worry, you can try again anytime.</p>
+    
+    <!-- Retry Button -->
+    <a href="/cart/" class="btn btn-danger btn-lg px-4 py-2 rounded-pill shadow-sm">
+      🔄 Try Again
+    </a>
+
+    <!-- Extra Links -->
+    <div class="mt-4">
+      <a href="/" class="text-decoration-none text-muted small">← Back to Home</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- Optional Custom CSS -->
+<style>
+  .card {
+    background: #fff;
+  }
+  @media (max-width: 576px) {
+    .card {
+      padding: 2rem 1.5rem !important;
+    }
+  }
+</style>
+{% endblock %}

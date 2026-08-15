@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center fw-semibold display-5 mb-4" style="font-family: 'Playfair Display', serif;">
+      HOT CATEGORIES
+    </h2>
+    <div class="row justify-content-center">
+      {% for category in categories %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+        <!-- Card as a clickable link -->
+        <a href="{% url 'all_products' %}?category={{category.id}}" class="text-decoration-none text-dark">
+          <div class="card p-3 shadow-sm text-center" style="border-radius: 16px; transition: transform 0.2s;">
+            <!-- Enlarged image -->
+            <img src="{{ category.category_image.url }}" class="card-img-top mx-auto mb-3"
+              style="height: 250px; object-fit: cover; border-radius: 10px;" alt="{{ category.category_name }}">
+
+            <h5 class="mt-2">{{ category.category_name }}</h5>
+            <p class="text-muted small ">{{ category.description}}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

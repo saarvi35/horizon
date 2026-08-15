@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #f9f9f9;
+  }
+
+  .account-wrapper {
+    padding: 2rem 0;
+  }
+
+.account-sidebar {
+  width: 250px;
+  font-size: 14px;
+  padding: 1rem 0;
+  background: #fff;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f1f1f1;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.user-details .user-name {
+  font-weight: 600;
+}
+
+.user-details .user-bonus {
+  font-size: 13px;
+  color: #888;
+}
+
+.sidebar-group {
+  padding: 1rem 1.5rem 0;
+}
+
+.sidebar-label {
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-group ul li {
+  padding: 8px 0;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.sidebar-group ul li i {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.sidebar-group ul li.active {
+  font-weight: 600;
+  color: #000;
+}
+
+.sidebar-group ul li:hover {
+  background-color: #f2f2f2;
+  border-radius: 6px;
+  padding-left: 5px;
+}
+
+
+  .account-content {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 6px;
+  }
+
+  .account-content h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .info-section {
+    margin-bottom: 2rem;
+  }
+
+  .info-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .info-value {
+    color: #333;
+    margin-bottom: 0.25rem;
+  }
+
+  .edit-link {
+    float: right;
+    font-size: 14px;
+    color: #007185;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .edit-link:hover {
+    text-decoration: underline;
+  }
+
+  .divider {
+    border-bottom: 1px solid #e2e2e2;
+    margin: 2rem 0;
+  }
+
+  .delete-account {
+    color: #d32f2f;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .delete-account:hover {
+    text-decoration: underline;
+  }
+
+  .small-muted {
+    font-size: 13px;
+    color: #555;
+  }
+
+  /* Make account page responsive */
+@media (max-width: 991.98px) { /* tablets and below */
+  .account-sidebar {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+  }
+
+  .sidebar-user {
+    padding: 1rem;
+    justify-content: flex-start;
+  }
+
+  .account-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 767.98px) { /* small phones */
+  .account-wrapper {
+    padding: 1rem 0;
+  }
+
+  .account-sidebar {
+    font-size: 13px;
+    padding: 0.5rem 0;
+  }
+
+  .sidebar-user {
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75rem 1rem;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+    font-size: 14px;
+  }
+
+  .user-details .user-name {
+    font-size: 14px;
+  }
+
+  .user-details .user-bonus {
+    font-size: 12px;
+  }
+
+  .sidebar-group {
+    padding: 0.75rem 1rem 0;
+  }
+
+  .sidebar-group ul li {
+    padding: 6px 0;
+  }
+
+  .account-content {
+    padding: 1rem;
+  }
+
+  .account-content h3 {
+    font-size: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .info-title {
+    font-size: 14px;
+  }
+
+  .info-value {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 575.98px) { /* extra small screens */
+  .sidebar-user {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .avatar {
+    margin-right: 0;
+  }
+
+  .account-content h3 {
+    font-size: 18px;
+  }
+
+  .info-section {
+    margin-bottom: 1.2rem;
+  }
+}
+
+</style>
+
+<div class="container account-wrapper">
+
+  <div class="row">
+
+    <div class="col-lg-3">
+      <!-- Sidebar -->
+      <div class="account-sidebar">
+      <!-- User -->
+      <div class="sidebar-user">
+        <div class="avatar"> {{user.name|slice:":1"}} </div>
+        <div class="user-details">
+          <div class="user-name"> {{user.name}} </div>
+          <div class="user-bonus">🎁 100 bonuses available</div>
+        </div>
+      </div>
+
+      <!-- Orders -->
+      <div class="sidebar-group">
+        <p class="sidebar-label">Orders</p>
+        <ul>
+          <li> <a href="{% url 'wishlist' %}" class="text-decoration-none text-dark"> <i class="bi bi-heart"></i> Wishlist</a></li>
+          <li> <a href="{% url 'cart' %}" class="text-decoration-none text-dark"><i class="bi bi-bag"></i>Shopping Bag</a></li>
+          <li> <a href="{% url 'my_orders' %}" class="text-decoration-none text-dark"><i class="bi bi-star"></i>My Orders</a></li>
+        </ul>
+      </div>
+
+      <!-- Manage Account -->
+      <div class="sidebar-group">
+        <p class="sidebar-label">Manage account</p>
+        <ul>
+          <li class="active"><a href="{% url 'profile' %}" class="text-decoration-none text-dark"><i class="bi bi-person"></i> Personal Info </a></li>
+          <li><a href="{% url 'add_address' %}" class="text-decoration-none text-dark"><i class="bi bi-geo-alt"></i> Addresses </a></li>
+        </ul>
+      </div>
+
+      <!-- Customer Service -->
+      <div class="sidebar-group">
+        <p class="sidebar-label">Customer service</p>
+        <ul>
+          <li><a href="{% url 'help_center' %}" class="text-decoration-none text-dark"><i class="bi bi-question-circle"></i> Help center</a></li>
+          <li><a href="{% url 'terms' %}" class="text-decoration-none text-dark"><i class="bi bi-file-earmark-text"></i> Terms and conditions </a></li>
+        </ul>
+      </div>
+
+      <!-- Logout -->
+      <div class="sidebar-group">
+        <ul>
+          <li> <a href="{% url 'logout' %}" class="text-decoration-none text-dark"> <i class="bi bi-box-arrow-right"></i> Log out </a> </li>
+        </ul>
+      </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <!-- Content -->
+      <div class="account-content">
+        <h3>Personal info</h3>
+
+        <!-- Basic Info -->
+        <div class="info-section">
+          <div class="info-title">Basic info </div>
+          <div class="info-value">{{ user.name }}</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Contact -->
+        <div class="info-section">
+          <div class="info-title">Contact </div>
+          <div class="info-value">{{ user.email }}</div>
+          <div class="info-value">{{ user.contact }} <span style="color: green;">Verified</span></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Password -->
+        <div class="info-section">
+          <div class="info-title">Password <a href="{% url 'reset_password' %}" class="edit-link">Edit</a></div>
+          <div class="info-value">**********</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Delete Account -->
+        <div class="info-section">
+          <div class="info-title">Delete account</div>
+          <p class="small-muted">
+            When you delete your account, your public profile will be deactivated immediately. 
+          </p>
+          <a href="{% url 'delete_account' %}" class="delete-account">Delete account</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{% endblock %}
+
+

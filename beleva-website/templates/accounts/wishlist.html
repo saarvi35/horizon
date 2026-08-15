@@ -1,0 +1,64 @@
+{% extends 'base.html'%} 
+    
+{%load static %}
+  
+{% block content %}
+<div class="py-5 container">
+    <h2 class="mb-4 fw-bold text-center">WISHLIST</h2>
+
+
+    {% if items %}
+                    
+        <div class="p-3 shadow mb-3 rounded-3 bg-white">
+                        {% for item in items %}
+                        <div class="product-card1 p-2 row align-items-center">
+                            <div class="col-md-2 d-flex justify-content-center">
+                                <img src="{{ item.product.details_image.first.image.url }}" alt="{{ item.product.product_name }}" class="img-fluid" style="height: 100px; width: 130px; object-fit: cover;">
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-1 fw-bold">{{ item.product.product_name }}</h6>
+                                <p class="text-muted mb-0 text-truncate">{{ item.product.description}}</p>
+                            </div>
+                            <div class="col-md-2 fw-bold">
+                            {% if item.product.discount_price %}
+                                <div class="price-info d-flex align-items-center justify-content-center gap-3">
+                                    <span class="text-muted text-decoration-line-through small">₹{{ item.product.original_price }}</span>
+                                    <span class="text-danger fw-bold">₹{{ item.product.discount_price }}</span>
+                                </div>
+                                {% else %}
+                                <div class="price-info d-flex align-items-center justify-content-center gap-3">
+                                    <span class="text-danger fw-bold">₹{{ item.product.original_price }}</span>
+                                </div>
+                                
+                            {% endif %}
+                            </div>
+                            <div class="col-md-1">
+                                <a href="{% url 'add_to_cart' item.product.id %}" class="text-danger" title="Add to Bag">
+                                    <i class="bi bi-bag-plus fs-5"></i>
+                                </a>
+                            </div>
+                            <div class="col-md-1 ">
+                                <a href="{% url 'delete_from_wishlist' item.product.id %}" class="text-danger">
+                                    <i class="bi bi-trash fs-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    <hr>
+                        {% endfor %}
+        </div>
+    {% else %}
+        <div class="d-flex justify-content-center align-items-center bg-white shadow rounded-3 p-5" style="min-height: 300px;">
+                <div class="text-center">
+                    <img src="{% static 'images/wishlist.png' %}" alt="Empty Wishlist" class="img-fluid mb-3" style="max-width: 300px;">
+                    <h5 class="text-muted">Your wishlist is empty.</h5>
+                    <p class="text-muted small">Looks like you haven't added any products yet.</p>
+                    <a href="{% url 'all_products' %}" class="btn btn-outline-dark mt-2">Browse Products</a>
+                </div>
+            </div>
+
+    {% endif %}
+</div>
+
+{% endblock %}
+
+

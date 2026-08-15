@@ -1,0 +1,73 @@
+{% extends 'base.html'%}
+
+{%load static %}
+
+
+{% block content %}
+
+<div class="container my-5">
+  <h2 class="text-center fw-semibold display-5 mb-4" style="font-family: 'Playfair Display', serif;">
+    CONTACT US
+  </h2>
+
+  <div class="row shadow-lg rounded-4 overflow-hidden">
+    <!-- Left: Contact Form -->
+    <div class="col-md-6 p-5 bg-light">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="name" class="form-label">Name *</label>
+          <input type="text" name="name" class="form-control rounded-pill" id="name" placeholder="Enter your full name">
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email *</label>
+          <input type="email" name="email" class="form-control rounded-pill" id="email" placeholder="Enter your email address">
+        </div>
+
+        <div class="mb-3">
+          <label for="contact" class="form-label">Contact *</label>
+          <input type="text" name="contact" class="form-control rounded-pill" id="contact" placeholder="Enter your phone number">
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label ps-2">Message *</label>
+          <textarea name="description" id="description" class="form-control rounded-4" rows="4" placeholder="Your message here..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-dark px-4 mt-3 rounded-pill">Send Message</button>
+      </form>
+    </div>
+
+    <!-- Right: Image -->
+    <div class="col-md-6 d-none d-md-block p-0">
+      <img src="{% static 'images/form-image.jpg' %}" alt="Contact Visual" class="rounded-0 h-100 w-100 object-fit-cover">
+    </div>
+  </div>
+
+  <div class="row text-center mt-5">
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-telephone fs-4 mb-2"></i>
+        <p class="mb-1 fw-bold">Call us directly</p>
+        <small>Customers: +91 765 432 10</small>
+      </div>
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-envelope fs-4 mb-2"></i>
+        <p class="mb-1 fw-bold">Send a message</p>
+        <small>info@beleva.com<br>support@beleva.com</small>
+      </div>
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-geo-alt fs-4 mb-2"></i>
+        <p class="mb-1 fw-bold">Store location</p>
+        <small>New York 11741, USA<br>336 Lillian Bolasky, Holbrook</small>
+      </div>
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-clock fs-4 mb-2"></i>
+        <p class="mb-1 fw-bold">Working hours</p>
+        <small>Mon–Fri 8:00 – 18:00<br>Sat–Sun 10:00 – 16:00</small>
+      </div>
+    </div>
+</div>
+
+
+{% endblock %}

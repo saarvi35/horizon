@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="py-5 px-5 mx-0">
+  <h3 class="mb-4 fw-bold text-center"> {{heading}} </h3>
+
+  <div class="row">
+    <!-- FILTER SIDEBAR -->
+    <div class="col-md-3 mb-4">
+  <form method="get" class="border rounded shadow-sm bg-white p-3">
+    
+    <!-- Title -->
+    <h5 class="fw-bold mb-3 border-bottom pb-2 text-center text-uppercase">Filter Products</h5>
+
+    <!-- Categories -->
+    <h6 class="text-muted fw-semibold mb-2">Categories</h6>
+    <div class="mb-3">
+      {% for cat in categories %}
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" name="category" value="{{ cat.id }}"
+                 id="cat{{ cat.id }}" {% if cat.id|stringformat:"s" in selected_categories %}checked{% endif %}>
+          <label class="form-check-label text-capitalize" for="cat{{ cat.id }}">
+            {{ cat.category_name }}
+          </label>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Price Range -->
+    <h6 class="text-muted fw-semibold mb-2 mt-3">Price Range (₹)</h6>
+    <div class="input-group mb-3">
+      <input type="number" class="form-control" name="min_price" placeholder="Min" min="0"
+             value="{{ selected_min_price }}">
+      <input type="number" class="form-control" name="max_price" placeholder="Max" min="0"
+             value="{{ selected_max_price }}">
+    </div>
+
+    <!-- Availability -->
+    <h6 class="text-muted fw-semibold mb-2">Availability</h6>
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" name="is_available" value="in"
+             id="inStock" {% if 'in' in selected_availability %}checked{% endif %}>
+      <label class="form-check-label" for="inStock">In Stock</label>
+    </div>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="is_available" value="out"
+             id="outStock" {% if 'out' in selected_availability %}checked{% endif %}>
+      <label class="form-check-label" for="outStock">Out of Stock</label>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-dark w-100 fw-semibold">Apply Filters</button>
+
+  </form>
+</div>
+
+
+    <!-- PRODUCT LISTING -->
+    <div class="col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+      
+      <!-- Sorting Dropdown -->
+      <div class="d-flex justify-content-end" style="gap: 8px;">
+  <span class="fw-semibold">Sort by</span>
+  
+  <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle px-3 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      {{ selected_sort|default:"Popularity" }}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=popularity">Popularity</a></li>
+      <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=price_low">Price Low-to-High</a></li>
+      <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=price_high">Price High-to-Low</a></li>
+      <li><a class="dropdown-item" href="?{% if request.GET.view %}view={{ request.GET.view }}&{% endif %}sort=newest">Newest First</a></li>
+    </ul>
+  </div>
+      </div>
+      {% if selected_categories %}
+        <div>
+            <span class="fw-semibold">Selected Categories:</span>
+            <span class="text-dark text-capitalize">
+                {{ selected_category|join:", " }}
+            </span>
+        </div>
+      {% endif %}
+      </div>
+      <div class="row g-4 justify-content-center">
+        {% for product in page_object %}
+          <div class="col-12 col-md-6 col-lg-4 mb-4">
+            
+          <div class="card product-card border-1 shadow-lg p-3" style="border-radius: 16px;">
+<a href="{% url 'product_details' product.id %}" class="text-decoration-none text-dark">
+            <img src="{{ product.details_image.first.image.url }}" ... class="product-img mb-3"
+              style="height: 250px; object-fit: cover; border-radius: 10px;" alt="{{ product.product_name }}">
+            <h5 class="fw-semibold mb-1 text-dark text-truncate">{{ product.product_name }}</h5>
+            <p class="text-muted small text-truncate">{{ product.description }}</p>
+</a>
+          <!-- ratings and reviews -->
+           <div class="mb-2">
+            {% with rating=product.ratings %}
+              {% if rating %}
+                {% for i in "12345" %}
+                  {% if rating >= forloop.counter %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% elif rating >= forloop.counter0|add:"0.5" %}
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="text-muted small ms-1">({{ product.reviews }} reviews)</span>
+              {% else %}
+                <span class="text-muted small">No reviews yet</span>
+              {% endif %}
+            {% endwith %}
+          </div>
+            <!-- Price + Wishlist icon in same row -->
+            <div class="d-flex justify-content-between align-items-center px-2 mt-2">
+              {% if product.discount_price %}
+              <div>
+                <span class="text-muted text-decoration-line-through">₹ {{ product.original_price }}</span>
+                <span class="text-danger fw-bold">₹ {{ product.discount_price }}</span>
+              </div>
+              {% else %}
+              <span class="text-danger fw-bold">₹ {{ product.original_price }}</span>
+              {% endif %}
+              
+                <button class="btn position-absolute end-0 m-2 wishlist-btn "
+                          data-product-id="{{ product.id }}"
+                          onclick="toggleWishlist(this)"
+                          title="Toggle wishlist">
+                  <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart text-danger"></i>
+                </button>
+              
+            </div>
+          </div>
+           
+          </div>
+        {% empty %}
+          <p class="text-center">No products found matching your filters.</p>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      <nav aria-label="Page Navigation">
+        <ul class="pagination pagination-circle justify-content-center mt-4">
+          {% if page_object.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_object.previous_page_number }}">Previous</a>
+            </li>
+          {% endif %}
+
+          {% for i in page_object.paginator.page_range %}
+            <li class="page-item {% if i == page_object.number %}active{% endif %}">
+              <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+          {% endfor %}
+
+          {% if page_object.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_object.next_page_number }}">Next</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+
+
+
+  </div>
+</div>
+
+{% endblock %}

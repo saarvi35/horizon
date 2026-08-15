@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row g-5">
+
+        <!-- Left: Images -->
+        <div class="col-lg-6 text-center">
+  <!-- Main Image: first image from details_image -->
+  {% if products.details_image.first %}
+    <img src="{{ products.details_image.first.image.url }}" class="img-fluid" id="mainImage" alt="Main Image">
+  {% else %}
+    <img src="{% static 'default.jpg' %}" class="img-fluid" id="mainImage" alt="No Image">
+  {% endif %}
+
+  <!-- Thumbnails -->
+  <div class="d-flex justify-content-center mt-3 flex-wrap">
+    {% for img in products.details_image.all %}
+      <img src="{{ img.image.url }}"
+           class="thumbnail {% if forloop.first %}active1 border border-success{% endif %} mx-1"
+           onclick="changeImage(event, this.src)"
+           style="height: 80px; width: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;">
+    {% endfor %}
+  </div>
+</div>
+
+
+        <!-- Right: Product Info -->
+        <div class="col-lg-6">
+            <h5 class="text-uppercase text-muted mb-2">{{ products.category }}</h5>
+            <h2 class="fw-bold mb-3">{{ products.product_name }}</h2>
+
+            <!-- ratings and reviews -->
+           <div class="mb-2">
+            {% with rating=products.ratings %}
+              {% if rating %}
+                {% for i in "12345" %}
+                  {% if rating >= forloop.counter %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% elif rating >= forloop.counter0|add:"0.5" %}
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="text-muted small ms-1">({{ products.reviews }} reviews)</span>
+              {% else %}
+                <span class="text-muted small">No reviews yet</span>
+              {% endif %}
+            {% endwith %}
+          </div>
+
+            <!-- Price -->
+            <div class="mb-3">
+                {% if products.discount_price %}
+                <span class="text-muted text-decoration-line-through me-2 price-text">₹{{ products.original_price }}</span>
+                <span class="text-success price-text">₹{{ products.discount_price }}</span>
+                {% else %}
+                <span class="text-dark price-text">₹{{ products.original_price }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <p class="text-muted small">{{ products.description }}</p>
+
+            <!-- Sizes -->
+            {% if products.size.all %}
+            <div class="product-option mb-3">
+                <label class="fw-semibold d-block mb-1">Size</label>
+                
+                <div class="d-flex flex-wrap gap-2">
+                    {% for size in products.size.all %}
+                    <button class="btn btn-outline-dark"> {{ size }} </button>
+                    {% endfor %}
+                </div>
+            </div>
+            <input type="hidden" name="selected_size" id="selectedSize">
+            {% endif %}
+
+            {% if valid_colors %}
+            <div class="product-option mb-4">
+                <label class="fw-semibold d-block mb-1">Colour</label>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for img in valid_colors %}
+                    <button class="btn btn-outline-dark me-2"
+                            onclick="changeImageByColor('{{ img.image.url }}')">
+                        {{ img.colors }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+
+
+
+            <!-- Buttons -->
+            <div class="d-flex gap-3 mb-4">
+                <a href="{% url 'add_to_cart' products.id %}" class="btn btn-dark btn-lg px-4">
+                    <i class="bi bi-cart-plus me-1"></i> Add to cart
+                </a>
+                <form method="POST" action="{% url 'add_to_cart' products.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ products.id }}">
+                    <button class="btn btn-success btn-lg px-4 shadow">
+                        <i class="bi bi-lightning-fill me-2"></i>Buy Now
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

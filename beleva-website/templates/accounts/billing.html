@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+
+  <!-- Page Title -->
+  <h2 class="text-center fw-semibold display-5 mb-5 text-uppercase" style="font-family: 'Playfair Display', serif;">Billing Details</h2>
+
+  <div class="row g-4">
+    <!-- Left: Address & Payment -->
+    <div class="col-12 col-lg-7">
+      <form method="post" id="billing-form" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        {% if saved_address %}
+        <h5 class="fw-semibold mb-3">Select a Saved Address</h5>
+        <div class="row g-3">
+          {% for addr in saved_address %}
+          <div class="col-12 col-md-6">
+            <div class="card h-100 shadow-sm border-0 address-card">
+              <div class="card-body">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="selected_address"
+                    id="addr{{ addr.id }}" value="{{ addr.id }}"
+                    {% if forloop.first %}required{% endif %}
+                    onclick="toggleNewAddress(false)">
+                  <label class="form-check-label" for="addr{{ addr.id }}">
+                    <strong>{{ addr.full_name }}</strong><br>
+                    {{ addr.address }}<br>
+                    {{ addr.city }}, {{ addr.state }}<br>
+                    {{ addr.country }} - {{ addr.zip_code }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- New Address Radio -->
+        <div class="mt-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="selected_address"
+                  id="newAddress" value="" onclick="toggleNewAddress(true)">
+                <label class="form-check-label fw-semibold" for="newAddress">
+                  Use a New Address
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- New Address Form -->
+        <div id="new-address-form" class="mt-4 d-none">
+          <h5 class="fw-semibold mb-3">Enter New Address</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full Name</label>
+              <input type="text" name="full_name" class="form-control" disabled required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" name="email_shipping" class="form-control" disabled required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input type="text" name="phone" class="form-control" disabled required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Address</label>
+              <input type="text" name="address" class="form-control" disabled required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Country</label>
+              <input type="text" name="country" class="form-control" disabled required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">City</label>
+              <input type="text" name="city" class="form-control" disabled required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">State</label>
+              <input type="text" name="state" class="form-control" disabled required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Zip Code</label>
+              <input type="text" name="zip_code" class="form-control" disabled required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Order Notes</label>
+              <textarea name="order_notes" class="form-control" rows="3" disabled></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <p id="error-msg" class="text-danger fw-semibold mt-3 d-none"></p>
+
+        <!-- Payment -->
+        <div class="mt-5">
+          <h5 class="fw-semibold mb-3">Select Payment Method</h5>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payment_method" value="COD" id="cod" checked>
+            <label class="form-check-label" for="cod">Cash on Delivery</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payment_method" value="CARD" id="card">
+            <label class="form-check-label" for="card">Pay Now (Card)</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark w-100 mt-4 py-2 fw-semibold">Proceed to Payment</button>
+      </form>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Order Summary</h5>
+        </div>
+        <div class="card-body">
+          {% for item in items %}
+          <div class="d-flex justify-content-between mb-2">
+            <span>{{ item.product.product_name }}</span>
+            <span>₹{{ item.total_price }}</span>
+          </div>
+          {% endfor %}
+          <hr>
+          <div class="d-flex justify-content-between fw-bold">
+            <span>Total</span>
+            <span>₹{{ total }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+.address-card {
+  border-radius: 16px;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.address-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<!-- Toggle Script -->
+<script>
+function toggleNewAddress(show) {
+  const formFields = document.querySelectorAll('#new-address-form input, #new-address-form textarea');
+  const formDiv = document.getElementById('new-address-form');
+  if (show) {
+    formDiv.classList.remove('d-none');
+  } else {
+    formDiv.classList.add('d-none');
+  }
+  formFields.forEach(field => {
+    field.disabled = !show;
+    if (show) {
+      field.setAttribute('required', 'required');
+    } else {
+      field.removeAttribute('required');
+    }
+  });
+}
+
+document.getElementById('billing-form').addEventListener('submit', function (e) {
+  const selected = document.querySelector('input[name="selected_address"]:checked');
+  if (!selected) {
+    const errorMsg = document.getElementById('error-msg');
+    errorMsg.classList.remove('d-none');
+    errorMsg.innerText = 'Please select an address or enter a new one.';
+    e.preventDefault();
+  }
+});
+</script>
+{% endblock %}
