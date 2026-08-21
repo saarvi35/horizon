@@ -1,0 +1,9 @@
+persistence:
+  storageSize: 5Gi
+
+image:
+  repository: mysql
+  tag: "8.0"
+
+service:
+  port: 3306

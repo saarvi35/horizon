@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: horizon-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/saarvi35/horizon.git'
+    targetRevision: HEAD
+    path: helm/django-chart
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: horizon
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

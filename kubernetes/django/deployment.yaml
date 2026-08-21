@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: horizon-django
+  namespace: horizon
+  labels:
+    app: horizon-django
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: horizon-django
+  template:
+    metadata:
+      labels:
+        app: horizon-django
+    spec:
+      containers:
+        - name: django
+          image: horizon-django:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: horizon-config
+            - secretRef:
+                name: horizon-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          volumeMounts:
+            - name: static-assets
+              mountPath: /app/staticfiles
+            - name: media-assets
+              mountPath: /app/media
+      volumes:
+        - name: static-assets
+          emptyDir: {}
+        - name: media-assets
+          persistentVolumeClaim:
+            claimName: media-pv-claim

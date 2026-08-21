@@ -46,3 +46,5 @@ certbot/www/
 .idea/
 .DS_Store
 Thumbs.db
+
+Add-Content .gitignore "horizon-django.tar"

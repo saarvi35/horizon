@@ -1,0 +1,95 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = 'docker'
+        DOCKER_IMAGE_DJANGO   = 'saarvi51/horizon-django'
+        DOCKER_IMAGE_NGINX    = 'saarvi51/horizon-nginx'
+        BUILD_TAG             = "${BUILD_NUMBER}"
+    }
+
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Checkout Source') {
+            steps {
+                echo 'Checking out code from Git...'
+                checkout scm
+            }
+        }
+
+        stage('Code Analysis & Security') {
+            steps {
+                echo 'Running Flake8 & Python Syntax Analysis...'
+                sh '''
+                    docker run --rm -v $(pwd)/beleva-website:/app python:3.10-slim \
+                    bash -c "pip install flake8 && flake8 /app --ignore=E501,F401" || true
+                '''
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                echo 'Executing Django Test Suite...'
+                sh '''
+                    docker compose run --rm horizon-app python manage.py test
+                '''
+            }
+            post {
+                always {
+                    sh 'docker compose down --volumes --remove-orphans'
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                echo 'Building Django & Nginx Container Images...'
+                sh """
+                    docker build -t ${DOCKER_IMAGE_DJANGO}:${BUILD_TAG} -t ${DOCKER_IMAGE_DJANGO}:latest -f beleva-website/Dockerfile beleva-website/
+                    docker build -t ${DOCKER_IMAGE_NGINX}:${BUILD_TAG} -t ${DOCKER_IMAGE_NGINX}:latest -f nginx/Dockerfile nginx/
+                """
+            }
+        }
+
+        stage('Push Images to Registry') {
+            steps {
+                echo 'Pushing Images to Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+                        docker push ${DOCKER_IMAGE_DJANGO}:${BUILD_TAG}
+                        docker push ${DOCKER_IMAGE_DJANGO}:latest
+                        docker push ${DOCKER_IMAGE_NGINX}:${BUILD_TAG}
+                        docker push ${DOCKER_IMAGE_NGINX}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Update GitOps Chart Config') {
+            steps {
+                echo 'Updating Helm Values with new Image Tag...'
+                sh """
+                    sed -i 's/tag: .*/tag: "${BUILD_TAG}"/' helm/django-chart/values.yaml
+                    git config user.email "jenkins@horizon.local"
+                    git config user.name "Jenkins CI"
+                    git add helm/django-chart/values.yaml
+                    git commit -m "ci(helm): update django image tag to ${BUILD_TAG} [skip ci]" || true
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully! ArgoCD will pick up the updated Helm tag for deployment.'
+        }
+        failure {
+            echo 'Pipeline execution failed. Check stage logs for details.'
+        }
+    }
+}
