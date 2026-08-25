@@ -1,0 +1,6 @@
+apiVersion: v2
+name: beleva-stack
+description: GitOps-ready Helm chart for the Beleva Django, Nginx, and MySQL stack
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "beleva-stack.name" . }}-config
+  labels:
+    {{- include "beleva-stack.labels" . | nindent 4 }}
+data:
+  DEBUG: {{ .Values.config.debug | quote }}
+  ALLOWED_HOSTS: {{ .Values.config.allowedHosts | quote }}
+  DB_HOST: {{ include "beleva-stack.name" . }}-mysql
+  DB_PORT: "3306"
+  DB_NAME: {{ .Values.config.dbName | quote }}
+  DB_USER: {{ .Values.config.dbUser | quote }}
+  MYSQL_DATABASE: {{ .Values.config.dbName | quote }}

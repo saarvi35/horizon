@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "beleva-stack.name" . }}-django
+  labels:
+    {{- include "beleva-stack.labels" . | nindent 4 }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.django.servicePort }}
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: django
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "beleva-stack.name" . }}-django
+  labels:
+    {{- include "beleva-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.django.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: django
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: django
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: mysql:8.0
+          command:
+            - sh
+            - -c
+            - >-
+              until mysqladmin ping -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" --silent;
+              do echo "waiting for MySQL"; sleep 2; done
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "beleva-stack.name" . }}-config
+                  key: DB_HOST
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "beleva-stack.name" . }}-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: DB_PASSWORD
+      containers:
+        - name: django
+          image: "{{ .Values.images.djangoRepository }}:{{ .Values.images.tag }}"
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - >-
+              python manage.py migrate && python manage.py collectstatic --noinput &&
+              gunicorn --bind 0.0.0.0:8000 ecommerce.wsgi:application
+          ports:
+            - name: http
+              containerPort: {{ .Values.django.servicePort }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "beleva-stack.name" . }}-config
+            - secretRef:
+                name: {{ .Values.existingSecret }}
+          resources:
+            {{- toYaml .Values.django.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 45
+            periodSeconds: 15
+          volumeMounts:
+            - name: media
+              mountPath: /app/media
+            - name: static
+              mountPath: /app/staticfiles
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: {{ include "beleva-stack.name" . }}-media
+        - name: static
+          emptyDir: {}

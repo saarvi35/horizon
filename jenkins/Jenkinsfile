@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = 'docker'
+        GITHUB_CREDENTIALS    = 'github-token'
         DOCKER_IMAGE_DJANGO   = 'saarvi51/horizon-django'
         DOCKER_IMAGE_NGINX    = 'saarvi51/horizon-nginx'
-        BUILD_TAG             = "${BUILD_NUMBER}"
     }
 
     options {
@@ -18,6 +18,9 @@ pipeline {
             steps {
                 echo 'Checking out code from Git...'
                 checkout scm
+                script {
+                    env.BUILD_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                }
             }
         }
 
@@ -35,7 +38,9 @@ pipeline {
             steps {
                 echo 'Executing Django Test Suite...'
                 sh '''
-                    docker compose run --rm horizon-app python manage.py test
+                    cp .env.example .env
+                    docker compose up -d --wait db
+                    docker compose run --rm web_app python manage.py test
                 '''
             }
             post {
@@ -74,12 +79,27 @@ pipeline {
             steps {
                 echo 'Updating Helm Values with new Image Tag...'
                 sh """
-                    sed -i 's/tag: .*/tag: "${BUILD_TAG}"/' helm/django-chart/values.yaml
+                    sed -i 's/^  tag: .*/  tag: "${BUILD_TAG}"/' helm/beleva-stack/values.yaml
                     git config user.email "jenkins@horizon.local"
                     git config user.name "Jenkins CI"
-                    git add helm/django-chart/values.yaml
-                    git commit -m "ci(helm): update django image tag to ${BUILD_TAG} [skip ci]" || true
+                    git add helm/beleva-stack/values.yaml
+                    git diff --cached --quiet || git commit -m "ci(release): deploy ${BUILD_TAG} [skip ci]"
                 """
+            }
+        }
+
+        stage('Push GitOps Release Commit') {
+            steps {
+                withCredentials([string(credentialsId: "${GITHUB_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        if git log -1 --pretty=%B | grep -q "ci(release):"; then
+                          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saarvi35/horizon.git"
+                          git push origin HEAD:main
+                        else
+                          echo "No GitOps change to push."
+                        fi
+                    '''
+                }
             }
         }
     }

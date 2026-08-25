@@ -1,0 +1,37 @@
+images:
+  djangoRepository: saarvi51/horizon-django
+  nginxRepository: saarvi51/horizon-nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+
+django:
+  replicas: 2
+  servicePort: 8000
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+nginx:
+  replicas: 2
+  servicePort: 80
+
+mysql:
+  image: mysql:8.0
+  storageSize: 5Gi
+
+storage:
+  mediaSize: 2Gi
+
+config:
+  debug: "0"
+  allowedHosts: "*"
+  dbName: beleva
+  dbUser: horizon_user
+
+# The secret is intentionally not stored in Git. Create it from .env with:
+#   make secret
+existingSecret: beleva-secret

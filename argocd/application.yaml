@@ -1,14 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: horizon-stack
+  name: beleva-stack
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: 'https://github.com/saarvi35/horizon.git'
-    targetRevision: HEAD
-    path: helm/django-chart
+    targetRevision: main
+    path: helm/beleva-stack
+    helm:
+      releaseName: beleva
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: horizon
@@ -16,3 +18,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
