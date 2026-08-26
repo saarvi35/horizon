@@ -1,7 +1,7 @@
 images:
   djangoRepository: saarvi51/horizon-django
   nginxRepository: saarvi51/horizon-nginx
-  tag: "67ce3d9"
+  tag: "ad3cd87"
   pullPolicy: IfNotPresent
 
 django:
