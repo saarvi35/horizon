@@ -10,10 +10,29 @@ if [[ ! -f "$env_file" ]]; then
   exit 1
 fi
 
-set -a
-# shellcheck disable=SC1090
-source "$env_file"
-set +a
+read_env_value() {
+  local key="$1"
+  local line value
+
+  line="$(grep -E "^${key}=" "$env_file" | tail -n 1 || true)"
+  value="${line#*=}"
+  value="${value%$'\r'}"
+
+  # .env values may be enclosed in single or double quotes. Only the secret
+  # variables needed below are read, so values such as ALLOWED_HOSTS may safely
+  # contain spaces without being executed as shell code.
+  if [[ "$value" == \"*\" && "$value" == *\" ]]; then
+    value="${value:1:${#value}-2}"
+  elif [[ "$value" == \'*\' && "$value" == *\' ]]; then
+    value="${value:1:${#value}-2}"
+  fi
+  printf '%s' "$value"
+}
+
+SECRET_KEY="$(read_env_value SECRET_KEY)"
+DB_USER="$(read_env_value DB_USER)"
+DB_PASSWORD="$(read_env_value DB_PASSWORD)"
+MYSQL_ROOT_PASSWORD="$(read_env_value MYSQL_ROOT_PASSWORD)"
 
 : "${SECRET_KEY:?SECRET_KEY is required in $env_file}"
 : "${DB_USER:?DB_USER is required in $env_file}"

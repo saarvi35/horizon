@@ -85,3 +85,16 @@ If a local port is busy, override it directly with `kubectl port-forward` using 
 Do not apply the old `kubernetes/` application manifests and the Argo CD application at the same time. They create separate application resources. The final GitOps owner is Argo CD release `beleva` from `helm/beleva-stack`.
 
 Before the first final cutover, verify the new `beleva-*` pods and `beleva-nginx` service work. The new chart deliberately uses a separate `beleva-mysql` PVC, so it starts with a new local MySQL database. If the old MySQL data matters, export/import it before removing the older manual `horizon-*` resources.
+
+## Troubleshooting a failed GitOps rollout
+
+Always inspect the image and the previous container logs before changing the chart:
+
+```bash
+kubectl get deployment beleva-django -n horizon \
+  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
+kubectl logs -n horizon deployment/beleva-django --previous --tail=100
+kubectl logs -n horizon deployment/beleva-nginx --previous --tail=100
+```
+
+If the rollout uses an old or invalid Docker Hub image, fix the source, commit and push `main`, then let Jenkins build and publish a fresh SHA-tagged image. Do not delete the stable older `horizon-*` application before the `beleva-*` pods are healthy.

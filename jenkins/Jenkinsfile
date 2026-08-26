@@ -56,6 +56,7 @@ pipeline {
                 sh """
                     docker build -t ${DOCKER_IMAGE_DJANGO}:${BUILD_TAG} -t ${DOCKER_IMAGE_DJANGO}:latest -f beleva-website/Dockerfile beleva-website/
                     docker build -t ${DOCKER_IMAGE_NGINX}:${BUILD_TAG} -t ${DOCKER_IMAGE_NGINX}:latest -f nginx/Dockerfile nginx/
+                    docker run --rm ${DOCKER_IMAGE_DJANGO}:${BUILD_TAG} python -c 'import django; print(django.get_version())'
                 """
             }
         }
