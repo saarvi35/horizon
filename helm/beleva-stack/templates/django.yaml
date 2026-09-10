@@ -76,18 +76,28 @@ spec:
                 name: {{ .Values.existingSecret }}
           resources:
             {{- toYaml .Values.django.resources | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /healthz/
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 5
+            failureThreshold: 24
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz/
               port: http
-            initialDelaySeconds: 20
+              scheme: HTTP
+            timeoutSeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz/
               port: http
-            initialDelaySeconds: 45
-            periodSeconds: 15
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 20
           volumeMounts:
             - name: media
               mountPath: /app/media
