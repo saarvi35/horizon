@@ -13,6 +13,12 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    // Local Jenkins cannot receive GitHub webhooks without a public tunnel.
+    // Polling keeps this WSL-based setup automatic without exposing Jenkins.
+    triggers {
+        pollSCM('H/2 * * * *')
+    }
+
     stages {
         stage('Checkout Source') {
             steps {
@@ -20,11 +26,19 @@ pipeline {
                 checkout scm
                 script {
                     env.BUILD_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.SKIP_CI = sh(
+                        script: 'git log -1 --pretty=%B | grep -q "\\[skip ci\\]" && echo true || echo false',
+                        returnStdout: true
+                    ).trim()
+                    if (env.SKIP_CI == 'true') {
+                        echo 'Release commit detected; skipping build stages to prevent a CI loop.'
+                    }
                 }
             }
         }
 
         stage('Code Analysis & Security') {
+            when { expression { env.SKIP_CI != 'true' } }
             steps {
                 echo 'Running Flake8 & Python Syntax Analysis...'
                 sh '''
@@ -35,6 +49,7 @@ pipeline {
         }
 
         stage('Run Unit Tests') {
+            when { expression { env.SKIP_CI != 'true' } }
             steps {
                 echo 'Executing Django Test Suite...'
                 sh '''
@@ -51,6 +66,7 @@ pipeline {
         }
 
         stage('Build Docker Images') {
+            when { expression { env.SKIP_CI != 'true' } }
             steps {
                 echo 'Building Django & Nginx Container Images...'
                 sh """
@@ -62,6 +78,7 @@ pipeline {
         }
 
         stage('Push Images to Registry') {
+            when { expression { env.SKIP_CI != 'true' } }
             steps {
                 echo 'Pushing Images to Docker Hub...'
                 withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -77,6 +94,7 @@ pipeline {
         }
 
         stage('Update GitOps Chart Config') {
+            when { expression { env.SKIP_CI != 'true' } }
             steps {
                 echo 'Updating Helm Values with new Image Tag...'
                 sh """
@@ -90,6 +108,7 @@ pipeline {
         }
 
         stage('Push GitOps Release Commit') {
+            when { expression { env.SKIP_CI != 'true' } }
             steps {
                 withCredentials([string(credentialsId: "${GITHUB_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
                     sh '''
