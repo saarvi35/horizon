@@ -28,6 +28,9 @@ storage:
 
 config:
   debug: "0"
+  # Local kind uses HTTP port-forwarding. Set this to "1" only behind a TLS
+  # terminating reverse proxy/Ingress in a real production environment.
+  secureSslRedirect: "0"
   allowedHosts: "*"
   dbName: beleva
   dbUser: horizon_user
